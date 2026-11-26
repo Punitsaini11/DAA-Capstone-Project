@@ -1,0 +1,1 @@
+Algorithms and data structures form important foundations in computer science. They allow programmers to solve difficult problems efficiently. Searching and sorting are common operations in applications. A well-designed algorithm can save time and memory while processing large amounts of information.

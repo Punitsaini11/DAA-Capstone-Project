@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextGuard | Plagiarism Detection</title>
+<style>
+:root{--bg:#0b1020;--panel:#131b2e;--panel2:#19243a;--text:#edf2ff;--muted:#9eabc5;--line:#2a3854;--accent:#7c9cff;--green:#36c995;--orange:#ffbd69;--red:#ff7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#182748 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.55 Inter,Segoe UI,Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:28px 20px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:21px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#8ca8ff,#6575ed);display:grid;place-items:center;color:#10182d;font-size:22px}
+.tag{border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:30px;font-size:12px}
+.hero{margin:20px 0 24px}.eyebrow{color:#9bb2ff;text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:9px 0 12px;letter-spacing:-1.5px}.hero p{color:var(--muted);max-width:700px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:linear-gradient(180deg,#162139,#111a2d);border:1px solid var(--line);border-radius:18px;padding:19px;min-width:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.panel h2{font-size:16px;margin:0}.hint{font-size:12px;color:var(--muted)}
+textarea{width:100%;height:220px;resize:vertical;background:#0c1425;border:1px solid #2b3b59;border-radius:12px;padding:14px;color:var(--text);font:13px/1.6 Consolas,monospace;outline:none}
+textarea:focus{border-color:var(--accent)}.file{display:flex;align-items:center;gap:8px;margin-top:10px;color:var(--muted);font-size:12px}.file input{max-width:210px;font-size:12px}
+.controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:18px 0}.controls label{color:var(--muted);font-size:13px}.controls select{background:#111a2d;border:1px solid var(--line);color:var(--text);padding:10px;border-radius:9px}
+button{border:0;border-radius:10px;padding:12px 18px;background:linear-gradient(135deg,#91aaff,#6c7ff1);color:#0b1330;font-weight:800;cursor:pointer}button:hover{filter:brightness(1.08)}button.secondary{background:#202d47;color:var(--text);border:1px solid var(--line)}
+.error{color:var(--red);font-size:13px;min-height:20px}
+.results{margin-top:18px;display:none}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.stat{background:#101a2d;border:1px solid var(--line);border-radius:14px;padding:15px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:25px;display:block;margin-top:4px}
+.bar{height:9px;background:#27344d;border-radius:20px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;background:linear-gradient(90deg,#46d6a5,#91aaff);width:0}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{color:#aebce0;font-size:11px;text-transform:uppercase;letter-spacing:.7px}
+.status{display:inline-block;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700}.good{background:#123c36;color:#65e0b6}.warn{background:#49351c;color:#ffd08b}.bad{background:#482332;color:#ff9aaa}
+.matches{margin-top:16px}.match{background:#101a2d;border:1px solid var(--line);padding:12px;border-radius:10px;margin:8px 0;font-size:13px}.match code{color:#a9bbff;white-space:normal}
+.note{color:var(--muted);font-size:12px;margin-top:15px}.footer{text-align:center;color:#75839e;font-size:12px;margin-top:35px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}textarea{height:180px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><div class="logo">T</div>TextGuard <span style="color:#8194bb;font-weight:500">/ Capstone</span></div><div class="tag">DSA • String Matching Algorithms</div></header>
+  <section class="hero"><div class="eyebrow">Academic integrity toolkit</div><h1>Find the overlap.<br><span style="color:#9bb2ff">Understand the match.</span></h1><p>Compare two text documents using three classic pattern-matching algorithms. Review matching phrases, similarity coverage and execution time in one place.</p></section>
+  <section class="grid">
+    <div class="panel"><div class="panel-head"><h2>Document A</h2><span class="hint">Reference text</span></div><textarea id="docA" placeholder="Paste the original/reference document here...">Data structures and algorithms are important foundations of computer science. They help programmers solve complex problems efficiently. Searching and sorting are common operations used in many applications. A good algorithm saves time and memory when processing large amounts of data.</textarea><div class="file">Upload .txt <input type="file" accept=".txt,text/plain" onchange="loadFile(event,'docA')"></div></div>
+    <div class="panel"><div class="panel-head"><h2>Document B</h2><span class="hint">Document to check</span></div><textarea id="docB" placeholder="Paste the document to check here...">Algorithms and data structures form important foundations in computer science. They allow programmers to solve difficult problems efficiently. Searching and sorting are common operations in applications. A well-designed algorithm can save time and memory while processing large amounts of information.</textarea><div class="file">Upload .txt <input type="file" accept=".txt,text/plain" onchange="loadFile(event,'docB')"></div></div>
+  </section>
+  <div class="controls"><label for="phraseSize">Phrase length</label><select id="phraseSize"><option value="4">4 words</option><option value="5" selected>5 words</option><option value="6">6 words</option><option value="7">7 words</option></select><button onclick="runAnalysis()">Compare documents</button><button class="secondary" onclick="resetDemo()">Load sample</button><span id="error" class="error"></span></div>
+  <section id="results" class="results">
+    <div class="panel"><div class="panel-head"><h2>Analysis overview</h2><span id="verdict" class="status warn">Review required</span></div>
+      <div class="stats"><div class="stat"><small>Matched phrases</small><strong id="phraseCount">0</strong></div><div class="stat"><small>Reference coverage</small><strong id="coverage">0%</strong></div><div class="stat"><small>Words in Document A</small><strong id="wordsA">0</strong></div><div class="stat"><small>Words in Document B</small><strong id="wordsB">0</strong></div></div>
+      <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:12px"><span>Estimated matching coverage of Document A</span><b id="coverageLabel">0%</b></div><div class="bar"><span id="coverageBar"></span></div>
+      <p class="note">Coverage is the percentage of words in Document A that belong to at least one exact matching phrase found in Document B. This is an educational indicator, not a formal plagiarism verdict.</p>
+    </div>
+    <div class="panel" style="margin-top:14px"><div class="panel-head"><h2>Algorithm performance</h2><span class="hint">Measured in this browser session</span></div><div class="tablewrap"><table><thead><tr><th>Algorithm</th><th>Matches</th><th>Execution time</th><th>Time complexity (per search)</th><th>Extra space</th></tr></thead><tbody id="performance"></tbody></table></div><p class="note">Timing depends on the device, browser and document size. The measured total includes searching every candidate phrase generated from Document A.</p></div>
+    <div class="panel matches"><div class="panel-head"><h2>Matching phrases</h2><span class="hint">Exact phrase matches</span></div><div id="matchList"></div></div>
+  </section>
+  <div class="footer">TextGuard • DSA Capstone Project • Naïve, Rabin–Karp and KMP</div>
+</div>
+<script>
+const sampleA = "Data structures and algorithms are important foundations of computer science. They help programmers solve complex problems efficiently. Searching and sorting are common operations used in many applications. A good algorithm saves time and memory when processing large amounts of data.";
+const sampleB = "Algorithms and data structures form important foundations in computer science. They allow programmers to solve difficult problems efficiently. Searching and sorting are common operations in applications. A well-designed algorithm can save time and memory while processing large amounts of information.";
+function loadFile(event,id){const f=event.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>document.getElementById(id).value=reader.result;reader.readAsText(f)}
+function normalize(s){return s.toLowerCase().replace(/[^\p{L}\p{N}\s']/gu,' ').replace(/\s+/g,' ').trim()}
+function naiveSearch(text,pattern){const out=[];if(!pattern)return out;for(let i=0;i<=text.length-pattern.length;i++){let j=0;while(j<pattern.length&&text[i+j]===pattern[j])j++;if(j===pattern.length)out.push(i)}return out}
+function rabinKarp(text,pattern){const out=[],n=text.length,m=pattern.length;if(!m||m>n)return out;const base=256,mod=1000000007;let h=1,p=0,t=0;for(let i=0;i<m-1;i++)h=(h*base)%mod;for(let i=0;i<m;i++){p=(base*p+pattern.charCodeAt(i))%mod;t=(base*t+text.charCodeAt(i))%mod}for(let i=0;i<=n-m;i++){if(p===t&&text.slice(i,i+m)===pattern)out.push(i);if(i<n-m){t=(base*(t-text.charCodeAt(i)*h)+text.charCodeAt(i+m))%mod;if(t<0)t+=mod}}return out}
+function kmpSearch(text,pattern){const out=[],m=pattern.length,n=text.length;if(!m)return out;const lps=Array(m).fill(0);for(let i=1,len=0;i<m;){if(pattern[i]===pattern[len])lps[i++]=++len;else if(len)len=lps[len-1];else lps[i++]=0}let i=0,j=0;while(i<n){if(text[i]===pattern[j]){i++;j++;if(j===m){out.push(i-j);j=lps[j-1]}}else if(j)j=lps[j-1];else i++}return out}
+function makeCandidates(a,size){const words=a.split(' ').filter(Boolean),seen=new Set(),items=[];for(let i=0;i<=words.length-size;i++){const phrase=words.slice(i,i+size).join(' ');if(!seen.has(phrase)){seen.add(phrase);items.push(phrase)}}return items}
+function analyze(searchFn,candidates,b){let matches=[],covered=new Set();for(const phrase of candidates){const positions=searchFn(b,phrase);if(positions.length){matches.push({phrase,positions});phrase.split(' ').forEach(w=>covered.add(w+'|'+phrase))}}return {matches,covered}}
+function runAnalysis(){const a=normalize(document.getElementById('docA').value),b=normalize(document.getElementById('docB').value),size=+document.getElementById('phraseSize').value;const err=document.getElementById('error');err.textContent='';if(!a||!b){err.textContent='Please enter text in both documents.';return}const wordsA=a.split(' '),wordsB=b.split(' ');if(wordsA.length<size){err.textContent=`Document A must contain at least ${size} words.`;return}const candidates=makeCandidates(a,size),algorithms=[['Naïve Pattern Matching',naiveSearch,'O(n × m)','O(1)'],['Rabin–Karp',rabinKarp,'Average O(n + m), worst O(n × m)','O(1)'],['Knuth–Morris–Pratt (KMP)',kmpSearch,'O(n + m)','O(m)']];let chosen=null,rows=[];
+for(const [name,fn,time,space] of algorithms){const start=performance.now(),result=analyze(fn,candidates,b),elapsed=performance.now()-start;rows.push({name,count:result.matches.length,elapsed,time,space,result});if(!chosen||result.matches.length>chosen.matches.length)chosen=result.result}
+const best=rows.reduce((x,y)=>y.count>x.count?y:x,rows[0]);const matchedWords=new Set();best.result.matches.forEach(m=>{const idx=wordsA.join(' ').indexOf(m.phrase);if(idx>=0){const before=wordsA.join(' ').slice(0,idx).trim();const start=before?before.split(' ').length:0;m.phrase.split(' ').forEach((_,j)=>matchedWords.add(start+j))}});
+const coverage=Math.min(100,matchedWords.size/wordsA.length*100);document.getElementById('phraseCount').textContent=best.count;document.getElementById('coverage').textContent=coverage.toFixed(1)+'%';document.getElementById('coverageLabel').textContent=coverage.toFixed(1)+'%';document.getElementById('coverageBar').style.width=coverage+'%';document.getElementById('wordsA').textContent=wordsA.length;document.getElementById('wordsB').textContent=wordsB.length;
+const verdict=document.getElementById('verdict');verdict.textContent=coverage>=50?'High overlap':coverage>=20?'Some overlap':'Low overlap';verdict.className='status '+(coverage>=50?'bad':coverage>=20?'warn':'good');
+document.getElementById('performance').innerHTML=rows.map(r=>`<tr><td><b>${r.name}</b></td><td>${r.count}</td><td>${r.elapsed.toFixed(3)} ms</td><td>${r.time}</td><td>${r.space}</td></tr>`).join('');
+const unique=best.result.matches.slice(0,100);document.getElementById('matchList').innerHTML=unique.length?unique.map((m,i)=>`<div class="match"><b>Match ${i+1}</b> <span class="hint">• ${m.positions.length} occurrence(s) in Document B</span><br><code>${escapeHtml(m.phrase)}</code><div class="hint">Character position(s) in B: ${m.positions.slice(0,8).join(', ')}${m.positions.length>8?'…':''}</div></div>`).join(''):'<p class="hint">No exact matching phrases found with the selected phrase length.</p>';
+document.getElementById('results').style.display='block'}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function resetDemo(){document.getElementById('docA').value=sampleA;document.getElementById('docB').value=sampleB;document.getElementById('phraseSize').value='5';document.getElementById('results').style.display='none';document.getElementById('error').textContent=''}
+</script>
+</body></html>
